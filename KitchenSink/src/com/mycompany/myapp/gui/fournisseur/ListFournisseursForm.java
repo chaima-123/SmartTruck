@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -34,7 +34,44 @@ public class ListFournisseursForm extends Form {
         SpanLabel sp = new SpanLabel();
         ArrayList<Fournisseur> fournisseurs;
         fournisseurs = ServiceFournisseur.getInstance().getAllFournisseurs();
-        System.out.println(fournisseurs);
+	
+	TextField rech = new TextField("", "Rechercher un fournisseur");
+        Container cn = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        Container cnToll = new Container(new BorderLayout());
+        TextField zoneRecherche = new TextField();
+        zoneRecherche.setHint("Rechercher par nom de societe");
+        Button boutonRecherche = new Button("ok");
+        cnToll.addComponent(BorderLayout.CENTER, zoneRecherche);
+        cnToll.addComponent(BorderLayout.EAST, boutonRecherche);
+        Toolbar toolbar = new Toolbar();
+        setToolbar(toolbar);
+        toolbar.setTitleComponent(cnToll);
+
+
+        boutonRecherche.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                Form f = new Form();
+
+                cn.setScrollableY(true);
+                ArrayList<Fournisseur> l0 = ServiceFournisseur.getInstance().SearchByNomSociete(zoneRecherche.getText());
+                for (int i = 0; i < l0.size(); i++) {
+                    DefaultListModel model2 = new DefaultListModel();
+                    model2.addItem(l0.get(i).getNomSociete());
+
+                    List liste = new List(model2);
+                    getStyle().setBgColor(0xffffff);
+                    f.addComponent(liste);
+                    f.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
+                    f.getToolbar().setTitle(("Resultats de la recherche"));
+                    f.show();
+
+                }
+
+            }
+        });       
+        
+
 
         for (Fournisseur fer : fournisseurs) {
             Container c1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
