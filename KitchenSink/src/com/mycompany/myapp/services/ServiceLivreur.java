@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -156,6 +156,21 @@ public class ServiceLivreur {
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return result;
+    }
+
+      public ArrayList<Livreur> SearchByNom(String nom) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/searchlivreur/" + nom;
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                livreurs = parseLivreurs(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return livreurs;
     }
 
 }
