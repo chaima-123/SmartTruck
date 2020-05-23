@@ -34,7 +34,43 @@ public class ListLivreursForm extends Form {
         SpanLabel sp = new SpanLabel();
         ArrayList<Livreur> livreurs;
         livreurs = ServiceLivreur.getInstance().getAllLivreurs();
-        System.out.println(livreurs);
+        TextField rech = new TextField("", "Rechercher un livreur");
+        Container cn = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        Container cnToll = new Container(new BorderLayout());
+        TextField zoneRecherche = new TextField();
+        zoneRecherche.setHint("Rechercher par nom");
+        Button boutonRecherche = new Button("ok");
+        cnToll.addComponent(BorderLayout.CENTER, zoneRecherche);
+        cnToll.addComponent(BorderLayout.EAST, boutonRecherche);
+        Toolbar toolbar = new Toolbar();
+        setToolbar(toolbar);
+        toolbar.setTitleComponent(cnToll);
+
+
+        boutonRecherche.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                Form f = new Form();
+
+                cn.setScrollableY(true);
+                ArrayList<Livreur> l0 = ServiceLivreur.getInstance().SearchByNom(zoneRecherche.getText());
+                for (int i = 0; i < l0.size(); i++) {
+                    DefaultListModel model2 = new DefaultListModel();
+                    model2.addItem(l0.get(i).getNom());
+
+                    List liste = new List(model2);
+                    getStyle().setBgColor(0xffffff);
+                    f.addComponent(liste);
+                    f.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
+                    f.getToolbar().setTitle(("Resultats de la recherche"));
+                    f.show();
+
+                }
+
+            }
+        });        
+        
+
 
         for (Livreur lv : livreurs) {
             Container c1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
