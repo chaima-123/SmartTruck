@@ -69,7 +69,7 @@ public class ServiceUtilisateur {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }
-    
+
     public ArrayList<fos_user> parseUtilisateurs(String jsonText) {
         try {
             System.out.println("jsontext: " + jsonText);
@@ -119,7 +119,7 @@ public class ServiceUtilisateur {
 
     public boolean updateUtilisateur(fos_user lv) {
         System.out.println("Modifier utilisateur:   " + lv);
-        String url ="http://localhost/pi1/test1.1/web/app_dev.php/user/updateUtilisateur?id="+lv.getId()+"&nom="+lv.getNom()+"&prenom="+lv.getPrenom()+"&adresse="+lv.getAdresse()+"&telephone="+lv.getTelephone()+"&email="+lv.getEmail()+"&grade="+lv.getGrade()+"&username="+lv.getUsername()+"&password="+lv.getPassword()+"";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/user/updateUtilisateur?id=" + lv.getId() + "&nom=" + lv.getNom() + "&prenom=" + lv.getPrenom() + "&adresse=" + lv.getAdresse() + "&telephone=" + lv.getTelephone() + "&email=" + lv.getEmail() + "&grade=" + lv.getGrade() + "&username=" + lv.getUsername() + "&password=" + lv.getPassword() + "";
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -132,14 +132,82 @@ public class ServiceUtilisateur {
         return resultOK;
 
     }
-    
-    
 
-    public static fos_user login(String usernam, String pwd) {
-        String req = "SELECT * from utilisateur where username='" + usernam + "' and password='" + pwd + "'";
-        fos_user u = new fos_user(usernam, pwd);
+    public ArrayList<fos_user> SearchByUsername(String username) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/searchuser/" + username;
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                utilisateurs = parseUtilisateurs(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return utilisateurs;
+    }
 
-        return u;
+    public fos_user U;
+
+    public fos_user CheckLoginData(String username, String password) {
+        ConnectionRequest con = new ConnectionRequest();
+
+        con.setUrl("hhttp://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserpwd/username/" + username + "/password/" + password);
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                ServiceUtilisateur ser = new ServiceUtilisateur();
+                System.out.println(new String(con.getResponseData()));
+                U = ser.getUserEntity(new String(con.getResponseData()));
+
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+
+        return U;
+    }
+
+    public fos_user getUserEntity(String json) {
+        fos_user t = null;
+        try {
+            JSONParser j = new JSONParser();
+
+            Map<String, Object> obj = j.parseJSON(new CharArrayReader(json.toCharArray()));
+
+            if (obj.size() == 0) {
+                return null;
+            }
+            t = new fos_user();
+
+            float id = Float.parseFloat(obj.get("id").toString());
+            t.setId((int) id);
+            t.setNom(obj.get("nom").toString());
+            t.setPrenom(obj.get("prenom").toString());
+            t.setAdresse(obj.get("adresse").toString());
+            t.setTelephone(((int) Float.parseFloat(obj.get("telephone").toString())));
+            t.setEmail(obj.get("email").toString());
+            t.setGrade(obj.get("grade").toString());
+            t.setUsername(obj.get("username").toString());
+            t.setPassword(obj.get("password").toString());
+        } catch (IOException ex) {
+        }
+        return t;
+    }
+
+    public fos_user getUserData(int user_id) {
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserid/" + user_id);
+
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                ServiceUtilisateur ser = new ServiceUtilisateur();
+                U = ser.getUserEntity(new String(con.getResponseData()));
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return U;
     }
 
 }
