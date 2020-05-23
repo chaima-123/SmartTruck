@@ -13,6 +13,7 @@ import java.util.Date;
  */
 public class fos_user {
 
+    public static fos_user current_user = null;
     private int id, enabled, telephone;
     //private tinyint enabled;
     private String username, username_canonical, email, email_canonical, salt, password, confiramtion_token, roles, nom, prenom, adresse, grade;
