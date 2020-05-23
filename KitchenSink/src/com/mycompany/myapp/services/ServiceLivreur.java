@@ -43,7 +43,7 @@ public class ServiceLivreur {
     }
 
     public boolean addLivreur(Livreur l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutlivreur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&ville=" + l.getVille() + "&telephone=" + l.getTelephone() + "";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutlivreurMob?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&ville=" + l.getVille() + "&telephone=" + l.getTelephone() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -81,7 +81,7 @@ public class ServiceLivreur {
     }
 
     public ArrayList<Livreur> getAllLivreurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreur";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreurMob";
         req.setUrl(url);
         System.out.println("req: " + req.getUrl());
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -98,22 +98,6 @@ public class ServiceLivreur {
         return livreurs;
     }
 
-//    public boolean updateLivreur(Livreur lv) {
-//        System.out.println("livreur:   " + lv);
-//        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updateliv?id=2&nom=122&prenom=zzz&ville=aa&telephone=25895";
-//        req.setUrl(url);
-//        req.addResponseListener(new ActionListener<NetworkEvent>() {
-//            @Override
-//            public void actionPerformed(NetworkEvent evt) {
-//                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-//                req.removeResponseListener(this);
-//            }
-//        });
-//        NetworkManager.getInstance().addToQueueAndWait(req);
-//        return resultOK;
-//
-//    }
-    
     public boolean modifierLivreur(Livreur ta) {
         ConnectionRequest con = new ConnectionRequest();
         String Url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updateliv/" + ta.getId()
