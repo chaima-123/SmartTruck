@@ -145,6 +145,7 @@ public class ListFournisseursForm extends Form {
                     String result = ServiceFournisseur.getInstance().DeleteFournisseur(fer);
                     if (!result.equals("Error")) {
                         Dialog.show("Success", result, "OK", null);
+			new ListFournisseursForm(previous).show();
                     } else {
                         Dialog.show("ERROR", "Server error", "OK", null);
                     }
