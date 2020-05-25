@@ -60,6 +60,7 @@ public class UpdateUserForm extends Form {
                 fos_user u = new fos_user(id, tel, name, pren, adresse, mail, role, identif, pwd);
                 if (ServiceUtilisateur.getInstance().updateUtilisateur(u)) {
                     Dialog.show("Success", "Modification avec succes", "OK", null);
+		    new ListUsersForm(current).show();
                 } else {
                     Dialog.show("ERROR", "Modification echouee", "OK", null);
                 }
