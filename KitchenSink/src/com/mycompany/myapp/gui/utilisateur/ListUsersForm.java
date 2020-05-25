@@ -136,13 +136,27 @@ TextField rech = new TextField("", "Rechercher un utilisateur");
             cPassword.add(password);
             c1.add(cPassword);
             Button modifbtn = new Button("Modifier cet utilisateur");
-            Button btnDeleteFournisseur = new Button("Supprimer cet utilisateur");
+            Button btnDeleteUser = new Button("Supprimer cet utilisateur");
+            btnDeleteUser.addActionListener((eeee) -> {
+
+                if (Dialog.show("Confirmation", "Voulez-vous vraiment supprimer cet utilisateur ? ", "OK", "ANNULER")) {
+                    String result = ServiceUtilisateur.getInstance().DeleteUtilisateur(fer);
+                    if (!result.equals("Error")) {
+                        Dialog.show("Success", result, "OK", null);
+                        new ListUsersForm(previous).show();
+                    } else {
+                        Dialog.show("ERROR", "Server error", "OK", null);
+                    }
+                } else {
+
+                }
+            });
 
             Label espace = new Label(" "
                     + " "
                     + " ");
             c1.add(modifbtn);
-            c1.add(btnDeleteFournisseur);
+            c1.add(btnDeleteUser);
             c1.add(espace);
             add(c1);
 
