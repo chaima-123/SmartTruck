@@ -126,6 +126,7 @@ public class ListLivreursForm extends Form {
                     System.out.println("result= " + result);
                     if (!result.equals("Error")) {
                         Dialog.show("Success", result, "OK", null);
+			new ListLivreursForm(previous).show();
                     } else {
                         Dialog.show("ERROR", "Server error", "OK", null);
                     }
