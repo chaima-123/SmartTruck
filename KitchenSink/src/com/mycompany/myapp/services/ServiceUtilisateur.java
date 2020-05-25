@@ -27,7 +27,7 @@ public class ServiceUtilisateur {
     public static ServiceUtilisateur instance = null;
     public boolean resultOK;
     private ConnectionRequest req;
-    private ConnectionRequest cr;
+    String result = "";
 
     public ServiceUtilisateur() {
         req = new ConnectionRequest();
@@ -98,23 +98,17 @@ public class ServiceUtilisateur {
     }
 
     public ArrayList<fos_user> getAllUtilisateurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/showutilisateur";
-        req.setUrl(url);
-        System.out.println("cr: " + req.getUrl());
-
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/showutilisateur");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                // System.out.println("hello omaa jmai ");
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                System.out.println(res);
-                utilisateurs = parseUtilisateurs(res);
+                ServiceUtilisateur ser = new ServiceUtilisateur();
+                utilisateurs = ser.parseUtilisateurs(new String(con.getResponseData()));
             }
         });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        return utilisateurs;
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return utilisateurs;        
     }
 
     public boolean updateUtilisateur(fos_user lv) {
@@ -131,6 +125,31 @@ public class ServiceUtilisateur {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
 
+    }
+
+	public String DeleteUtilisateur(fos_user c) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/deleteuser?id=" + c.getId();
+        req.setUrl(url);// Insertion de l'URL de notre demande de connexion
+        System.out.println(url);
+
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                try {
+                    String data = new String(req.getResponseData());
+                    JSONParser j = new JSONParser();
+                    Map<String, Object> tasksListJson;
+                    tasksListJson = j.parseJSON(new CharArrayReader(data.toCharArray()));
+                    result = (String) tasksListJson.get("body");
+
+                } catch (IOException ex) {
+                    ex.getMessage();
+                }
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return result;
     }
 
     public ArrayList<fos_user> SearchByUsername(String username) {
