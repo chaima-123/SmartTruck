@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -59,7 +59,7 @@ public class AddLivreurForm extends Form {
                     ToastBar.showMessage("Ajout en cours...", FontImage.MATERIAL_INFO);
                     Livreur l = new Livreur(tfNom.getText(), tfPrenom.getText(), tfVille.getText(), Integer.parseInt(tfTelephone.getText()));
                     if (ServiceLivreur.getInstance().addLivreur(l)) {
-                        Dialog.show("Success", "Fournisseur ajouté avec succés", "OK", null);
+                        Dialog.show("Success", "Livreur ajouté avec succés", "OK", null);
                     } else {
                         Dialog.show("ERREUR", "Echec à l'ajout", "OK", null);
                     }
