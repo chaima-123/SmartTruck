@@ -81,17 +81,13 @@ public class ServiceLivreur {
     }
 
     public ArrayList<Livreur> getAllLivreurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreurMob";
-        req.setUrl(url);
-        System.out.println("req: " + req.getUrl());
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreurMob");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                System.out.println(res);
-                livreurs = parseLivreurs(res);
-                System.out.println("bbb :" + livreurs);
+                ServiceLivreur ser = new ServiceLivreur();
+                livreurs = ser.parseLivreurs(new String(con.getResponseData()));
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
