@@ -131,26 +131,19 @@ public class ServiceFournisseur {
     }
 
     public ArrayList<Fournisseur> getAllFournisseurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseurMob";
-        req.setUrl(url);
-        System.out.println("cr: " + req.getUrl());
-
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseurMob");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                // System.out.println("hello omaa jmai ");
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                System.out.println(res);
-                fournisseurs = parseFournisseurs(res);
-                System.out.println("bbb :" + fournisseurs);
-
+                ServiceFournisseur ser = new ServiceFournisseur();
+                fournisseurs = ser.parseFournisseurs(new String(con.getResponseData()));
             }
         });
-        NetworkManager.getInstance().addToQueueAndWait(req);
+        NetworkManager.getInstance().addToQueueAndWait(con);
         return fournisseurs;
     }
+
     public ArrayList<Fournisseur> SearchByNomSociete(String nomSociete) {
         String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/searchfsr/" + nomSociete;
         req.setUrl(url);
