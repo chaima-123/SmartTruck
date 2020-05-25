@@ -28,7 +28,9 @@ public class ServiceUtilisateur {
     public boolean resultOK;
     private ConnectionRequest req;
     String result = "";
+    public fos_user U;
 
+    
     public ServiceUtilisateur() {
         req = new ConnectionRequest();
     }
@@ -38,6 +40,36 @@ public class ServiceUtilisateur {
             instance = new ServiceUtilisateur();
         }
         return instance;
+    }
+    
+    public boolean login(fos_user l) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/login/"+ l.getUsername() + "/" + l.getPassword()+"";
+        req.setUrl(url);
+        System.out.println("url: " + url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+    
+    public boolean forget(fos_user l) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/forget/"+ l.getUsername() + "";
+        req.setUrl(url);
+        System.out.println("url: " + url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
     }
 
     public boolean addUtilisateur(fos_user l) {
@@ -127,7 +159,7 @@ public class ServiceUtilisateur {
 
     }
 
-	public String DeleteUtilisateur(fos_user c) {
+    public String DeleteUtilisateur(fos_user c) {
         String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/deleteuser?id=" + c.getId();
         req.setUrl(url);// Insertion de l'URL de notre demande de connexion
         System.out.println(url);
@@ -152,7 +184,7 @@ public class ServiceUtilisateur {
         return result;
     }
 
-    public ArrayList<fos_user> SearchByUsername(String username) {
+    public ArrayList<fos_user> SearchByUsername (String username) {
         String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/searchuser/" + username;
         req.setUrl(url);
         req.setPost(false);
@@ -167,12 +199,10 @@ public class ServiceUtilisateur {
         return utilisateurs;
     }
 
-    public fos_user U;
-
     public fos_user CheckLoginData(String username, String password) {
         ConnectionRequest con = new ConnectionRequest();
 
-        con.setUrl("hhttp://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserpwd/username/" + username + "/password/" + password);
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserpwd/" + username + "/" + password);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
@@ -229,4 +259,5 @@ public class ServiceUtilisateur {
         return U;
     }
 
+    
 }
