@@ -32,7 +32,7 @@ public class ListUsersForm extends Form {
         SpanLabel sp = new SpanLabel();
         ArrayList<fos_user> utilisateurs;
         utilisateurs = ServiceUtilisateur.getInstance().getAllUtilisateurs();
-TextField rech = new TextField("", "Rechercher un utilisateur");
+	TextField rech = new TextField("", "Rechercher un utilisateur");
         Container cn = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         Container cnToll = new Container(new BorderLayout());
         TextField zoneRecherche = new TextField();
