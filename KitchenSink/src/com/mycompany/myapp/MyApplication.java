@@ -1,4 +1,4 @@
-package com.mycompany.myapp;
+﻿package com.mycompany.myapp;
 
 import com.codename1.components.ImageViewer;
 import com.codename1.components.ScaleImageLabel;
@@ -238,15 +238,18 @@ public class MyApplication {
         TextField prenom = new TextField("", "Mot de passe");
         prenom.setConstraint(TextField.PASSWORD);
         Button btn = new Button("Se connecter");
+        Button forget = new Button ("Mot de passe oublié ?");
         Button btnFb = new Button("Se connecter avec Facebook");
         Button btnRegister = new Button("Créez un nouveau compte");
 
         hi.add(nom);
         hi.add(prenom);
         hi.add(btn);
+        hi.add(forget);
         hi.add(btnFb);
         hi.add(btnRegister);
 
+        forget.addActionListener(e -> new ForgetPassword(currentForm).show());
         btnFb.addActionListener(e -> new UserForm().show());
 
         //connect

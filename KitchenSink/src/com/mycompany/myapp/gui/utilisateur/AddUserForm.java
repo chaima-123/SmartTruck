@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -68,6 +68,7 @@ public class AddUserForm extends Form {
                 fos_user f = new fos_user(tfNom.getText(), tfPrenom.getText(), tfAdresse.getText(), Integer.parseInt(tfTelephone.getText()), tfEmail.getText(), role, tfUsername.getText(), tfPassword.getText());
                 if (ServiceUtilisateur.getInstance().addUtilisateurAdmin(f)) {
                         Dialog.show("Success", "Utilisateur ajouté avec succés", "OK", null);
+                        new ListUsersForm(previous).show();
                     } else {
                         Dialog.show("ERREUR", "Echec à l'ajout", "OK", null);
                     }

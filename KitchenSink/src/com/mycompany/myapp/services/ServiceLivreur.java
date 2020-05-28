@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -43,7 +43,7 @@ public class ServiceLivreur {
     }
 
     public boolean addLivreur(Livreur l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutlivreur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&ville=" + l.getVille() + "&telephone=" + l.getTelephone() + "";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutlivreurMob?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&ville=" + l.getVille() + "&telephone=" + l.getTelephone() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -81,39 +81,19 @@ public class ServiceLivreur {
     }
 
     public ArrayList<Livreur> getAllLivreurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreur";
-        req.setUrl(url);
-        System.out.println("req: " + req.getUrl());
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showlivreurMob");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                System.out.println(res);
-                livreurs = parseLivreurs(res);
-                System.out.println("bbb :" + livreurs);
+                ServiceLivreur ser = new ServiceLivreur();
+                livreurs = ser.parseLivreurs(new String(con.getResponseData()));
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return livreurs;
     }
 
-//    public boolean updateLivreur(Livreur lv) {
-//        System.out.println("livreur:   " + lv);
-//        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updateliv?id=2&nom=122&prenom=zzz&ville=aa&telephone=25895";
-//        req.setUrl(url);
-//        req.addResponseListener(new ActionListener<NetworkEvent>() {
-//            @Override
-//            public void actionPerformed(NetworkEvent evt) {
-//                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-//                req.removeResponseListener(this);
-//            }
-//        });
-//        NetworkManager.getInstance().addToQueueAndWait(req);
-//        return resultOK;
-//
-//    }
-    
     public boolean modifierLivreur(Livreur ta) {
         ConnectionRequest con = new ConnectionRequest();
         String Url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updateliv/" + ta.getId()
@@ -156,6 +136,21 @@ public class ServiceLivreur {
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return result;
+    }
+
+      public ArrayList<Livreur> SearchByNom(String nom) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/searchlivreur/" + nom;
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                livreurs = parseLivreurs(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return livreurs;
     }
 
 }

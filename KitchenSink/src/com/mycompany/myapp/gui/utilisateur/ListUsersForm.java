@@ -32,7 +32,41 @@ public class ListUsersForm extends Form {
         SpanLabel sp = new SpanLabel();
         ArrayList<fos_user> utilisateurs;
         utilisateurs = ServiceUtilisateur.getInstance().getAllUtilisateurs();
-        System.out.println(utilisateurs);
+	TextField rech = new TextField("", "Rechercher un utilisateur");
+        Container cn = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        Container cnToll = new Container(new BorderLayout());
+        TextField zoneRecherche = new TextField();
+        zoneRecherche.setHint("Rechercher par Username");
+        Button boutonRecherche = new Button("ok");
+        cnToll.addComponent(BorderLayout.CENTER, zoneRecherche);
+        cnToll.addComponent(BorderLayout.EAST, boutonRecherche);
+        Toolbar toolbar = new Toolbar();
+        setToolbar(toolbar);
+        toolbar.setTitleComponent(cnToll);
+
+        boutonRecherche.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                Form f = new Form();
+
+                cn.setScrollableY(true);
+                ArrayList<fos_user> l0 = ServiceUtilisateur.getInstance().SearchByUsername(zoneRecherche.getText());
+                for (int i = 0; i < l0.size(); i++) {
+                    DefaultListModel model2 = new DefaultListModel();
+                    model2.addItem(l0.get(i).getUsername());
+
+                    List liste = new List(model2);
+                    getStyle().setBgColor(0xffffff);
+                    f.addComponent(liste);
+                    f.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
+                    f.getToolbar().setTitle(("Resultats de la recherche"));
+                    f.show();
+
+                }
+
+            }
+        });
+
 
         for (fos_user fer : utilisateurs) {
             Container c1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
@@ -102,13 +136,27 @@ public class ListUsersForm extends Form {
             cPassword.add(password);
             c1.add(cPassword);
             Button modifbtn = new Button("Modifier cet utilisateur");
-            Button btnDeleteFournisseur = new Button("Supprimer cet utilisateur");
+            Button btnDeleteUser = new Button("Supprimer cet utilisateur");
+            btnDeleteUser.addActionListener((eeee) -> {
+
+                if (Dialog.show("Confirmation", "Voulez-vous vraiment supprimer cet utilisateur ? ", "OK", "ANNULER")) {
+                    String result = ServiceUtilisateur.getInstance().DeleteUtilisateur(fer);
+                    if (!result.equals("Error")) {
+                        Dialog.show("Success", result, "OK", null);
+                        new ListUsersForm(previous).show();
+                    } else {
+                        Dialog.show("ERROR", "Server error", "OK", null);
+                    }
+                } else {
+
+                }
+            });
 
             Label espace = new Label(" "
                     + " "
                     + " ");
             c1.add(modifbtn);
-            c1.add(btnDeleteFournisseur);
+            c1.add(btnDeleteUser);
             c1.add(espace);
             add(c1);
 

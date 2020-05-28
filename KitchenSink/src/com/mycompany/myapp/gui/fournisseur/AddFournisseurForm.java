@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.myapp.gui.fournisseur;
 
 import com.codename1.ui.Button;
@@ -43,6 +38,7 @@ public class AddFournisseurForm extends Form {
                         Fournisseur l = new Fournisseur(Integer.parseInt(tfCin.getText()), tfEmail.getText(), tfAdresse.getText(), Integer.parseInt(tfTelephone.getText()), Integer.parseInt(tfFax.getText()), tfNomSociete.getText());
                         if (ServiceFournisseur.getInstance().addFournisseur(l)) {
                             Dialog.show("Success", "Fournisseur ajouté avec succés","OK",null);
+			    new ListFournisseursForm(previous).show();
                         } else {
                            Dialog.show("ERREUR", "Echec à l'ajout", "OK", null);
                         }

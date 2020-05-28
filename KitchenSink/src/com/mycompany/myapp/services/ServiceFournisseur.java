@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -44,7 +44,7 @@ public class ServiceFournisseur {
     }
 
     public boolean addFournisseur(Fournisseur l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutfournisseur?cin=" + l.getCin() + "&email=" + l.getEmail() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&fax=" + l.getFax() + "&nomSociete=" + l.getNomSociete() + "";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutfournisseurMob?cin=" + l.getCin() + "&email=" + l.getEmail() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&fax=" + l.getFax() + "&nomSociete=" + l.getNomSociete() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -57,23 +57,6 @@ public class ServiceFournisseur {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }
-
-//    public boolean updateFournisseur(Fournisseur l) {
-//        System.out.println("fournisseur:   " + l);
-//        //   String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updatefr?id=2&cin=122&email=zzz&adresse=aa&telephone=25895&fax=444&nomSociete=ppp";        
-//        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updatefr?id=" + l.getId() + "&cin=" + l.getCin() + "&email=" + l.getEmail() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&fax=" + l.getFax() + "&nomSociete=" + l.getNomSociete() + "";
-//        req.setUrl(url);
-//        System.out.println("url modifier: " + url);
-//        req.addResponseListener(new ActionListener<NetworkEvent>() {
-//            @Override
-//            public void actionPerformed(NetworkEvent evt) {
-//                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-//                req.removeResponseListener(this);
-//            }
-//        });
-//        NetworkManager.getInstance().addToQueueAndWait(req);
-//        return resultOK;
-//    }
     
     
     public boolean modifierFournisseur(Fournisseur ta) {
@@ -148,21 +131,28 @@ public class ServiceFournisseur {
     }
 
     public ArrayList<Fournisseur> getAllFournisseurs() {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseur";
-        req.setUrl(url);
-        System.out.println("cr: " + req.getUrl());
-
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseurMob");
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                // System.out.println("hello omaa jmai ");
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                System.out.println(res);
-                fournisseurs = parseFournisseurs(res);
-                System.out.println("bbb :" + fournisseurs);
+                ServiceFournisseur ser = new ServiceFournisseur();
+                fournisseurs = ser.parseFournisseurs(new String(con.getResponseData()));
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return fournisseurs;
+    }
 
+    public ArrayList<Fournisseur> SearchByNomSociete(String nomSociete) {
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/searchfsr/" + nomSociete;
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                fournisseurs = parseFournisseurs(new String(req.getResponseData()));
+                req.removeResponseListener(this);
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
