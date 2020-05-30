@@ -10,9 +10,11 @@ import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.messaging.Message;
 import com.codename1.ui.events.ActionListener;
 import com.mycompany.myapp.entities.fos_user;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -258,6 +260,32 @@ public class ServiceUtilisateur {
         NetworkManager.getInstance().addToQueueAndWait(con);
         return U;
     }
+    
+    public boolean envoyerMail (int id){
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/composemail/"+id ;
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+        
+    }
+    
+    
+//    public void sendMail(String mai) {
+//
+//        Message m = new Message("<html><body>Check out <a href=\"https://www.codenameone.com/\">Codename One</a></body></html>");
+//        m.setMimeType(Message.MIME_HTML);
+//
+//        boolean success = m.sendMessageViaCloudSync(mai, "hanene.ennine@esprit.tn", "Name Of User", "Message Subject",
+//                "Check out Codename One at https://www.codenameone.com/");
+//        System.out.println("success: " + success);
+//    }
 
     
 }

@@ -40,12 +40,13 @@ import com.codename1.ui.util.Resources;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
-import com.esprit.gui.HomeForm;
 import com.mycompany.myapp.entities.fos_user;
 import java.io.IOException;
 import com.mycompany.myapp.gui.fournisseur.*;
 import com.mycompany.myapp.gui.livreur.LivreurForm;
+import com.mycompany.myapp.gui.utilisateur.ForgetPassword;
 import com.mycompany.myapp.services.ServiceUtilisateur;
+import java.util.ArrayList;
 
 public class MyApplication {
 
@@ -163,7 +164,7 @@ public class MyApplication {
                 boxy.replaceAndWait(placeholder, smartTruck, CommonTransitions.createFade(500));
 
                 Label newPlaceholder = new Label(" ");
-                Label byCodenameOne = new Label("by Codename One", "SplashSubTitle");
+                Label byCodenameOne = new Label("Codettes", "SplashSubTitle");
                 Component.setSameHeight(newPlaceholder, byCodenameOne);
                 Component.setSameWidth(newPlaceholder, byCodenameOne);
                 boxy.add(newPlaceholder);
@@ -234,11 +235,22 @@ public class MyApplication {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        TextField nom = new TextField("", "Identifiant");
-        TextField prenom = new TextField("", "Mot de passe");
-        prenom.setConstraint(TextField.PASSWORD);
+        
+        
+        TextField nom = new TextField("", "Identifiant",15, TextField.EMAILADDR);
+        nom.getAllStyles().setMargin(LEFT, 0);
+        TextField prenom = new TextField("", "Mot de passe", 15, TextField.PASSWORD);
+        prenom.getAllStyles().setMargin(LEFT, 0);
+        
+        Label loginIcon = new Label("", "TextField");
+        Label passwordIcon = new Label("", "TextField");
+        loginIcon.getAllStyles().setMargin(RIGHT, 0);
+        passwordIcon.getAllStyles().setMargin(RIGHT, 0);
+        nom.setUIID("TextFieldBlack");
+        prenom.setUIID("TextFieldBlack");
+        
         Button btn = new Button("Se connecter");
-        Button forget = new Button ("Mot de passe oublié ?");
+        Button forget = new Button("Mot de passe oublié ?");
         Button btnFb = new Button("Se connecter avec Facebook");
         Button btnRegister = new Button("Créez un nouveau compte");
 
@@ -257,42 +269,40 @@ public class MyApplication {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 ConnectionRequest cr = new ConnectionRequest();
-                cr.setUrl("http://localhost:8888/authentif/cnx.php");
-                cr.setPost(false);
-                cr.addArgument("name", nom.getText());
-                cr.addArgument("password", prenom.getText());
-                cr.addResponseListener(new ActionListener<NetworkEvent>() {
-                    @Override
-                    public void actionPerformed(NetworkEvent evt) {
-                        String res = new String(cr.getResponseData());
-                        if (res.equalsIgnoreCase("error")) {
-                            Dialog.show("Error", "Bad credentials", "ok", null);
-                            System.out.println(cr);
+                ArrayList<fos_user> utilisateurs;
+                utilisateurs = ServiceUtilisateur.getInstance().SearchByUsername(nom.getText());
+
+                if ((nom.getText().length() == 0) || (prenom.getText().length() == 0)) {
+                    Dialog.show("Alert", "Please fill all fields", "OK", null);
+                } else {
+                    for (fos_user fer : utilisateurs) {
+                        if (prenom.getText().equals(fer.getPassword())) {
+                            System.out.println("pwd=" + fer.getPassword());
+                            ToastBar.showMessage("Connexion en cours...", FontImage.MATERIAL_INFO);
+                            Dialog.show("Confirmation", "connexion avec succes", "OK", null);
+                            System.out.println("role=" + fer.getGrade());
+                            if (fer.getGrade().equals("Administrateur")) {
+                                showMainAdmin();
+                            } else {
+                                showMainUI();
+                            }
+
                         } else {
-                            //showMainUI();
-                            showMainAdmin();
-//                            String id = nom.getText();
-//                            String pwd = prenom.getText();
-//                            utilisateur f = new utilisateur(id, pwd);
-//                            String role = ServiceUtilisateur.getInstance().login(id, pwd).getGrade();
-//                            if (role.equals("Client")) {
-//                                showMainUI();
-//                            } else if (role.equals("Administrateur")) {
-//                                showMainAdmin();
-//                            }
-
+                            Dialog.show("Erreur", "Verifier vos coordonnees", "OK", null);
                         }
-                    }
-                });
-                NetworkManager.getInstance().addToQueue(cr);
-            }
 
+//                        NetworkManager.getInstance().addToQueue(cr);
+                    }
+                }
+            }
         });
 
         //Register
-        btnRegister.addActionListener(new ActionListener() {
+        btnRegister.addActionListener(
+                new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt
+            ) {
                 Form hi1 = new Form("Créer un nouveau compte", BoxLayout.y());
 
                 TextField tfNom = new TextField("", "Nom", 20, TextField.ANY);
@@ -312,6 +322,8 @@ public class MyApplication {
                 FontImage.setMaterialIcon(tfUsername.getHintLabel(), FontImage.MATERIAL_PERSON);
                 TextField tfPassword = new TextField("", "Mot de passe", 20, TextField.PASSWORD);
                 FontImage.setMaterialIcon(tfPassword.getHintLabel(), FontImage.MATERIAL_LOCK);
+                TextField tfPasswordVerif = new TextField("", "Verifier Mot de passe", 20, TextField.PASSWORD);
+                FontImage.setMaterialIcon(tfPasswordVerif.getHintLabel(), FontImage.MATERIAL_LOCK);
 
                 Validator val = new Validator();
                 val.setValidationFailureHighlightMode(Validator.HighlightMode.UIID);
@@ -321,42 +333,51 @@ public class MyApplication {
                         addConstraint(tfTelephone, new LengthConstraint(8, "Name must have at least 8 numbers")).
                         addConstraint(tfEmail, RegexConstraint.validEmail("E-Mail must be a valid email address")).
                         addConstraint(tfUsername, new LengthConstraint(2, "Name must have at least 2 charachters ")).
-                        addConstraint(tfPassword, new LengthConstraint(6, "Password must have at least 6 characters"));
+                        addConstraint(tfPassword, new LengthConstraint(6, "Password must have at least 6 characters")).
+                        addConstraint(tfPasswordVerif, new LengthConstraint(6, "Password must have at least 6 characters"));
 
                 Button btnValider = new Button("Créer un nouveau compte");
                 btnValider.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        ToastBar.showMessage("Création du compte en cours...", FontImage.MATERIAL_INFO);
-                        fos_user f = new fos_user(tfNom.getText(), tfPrenom.getText(), tfAdresse.getText(), Integer.parseInt(tfTelephone.getText()), tfEmail.getText(), role, tfUsername.getText(), tfPassword.getText());
-                        if (ServiceUtilisateur.getInstance().addUtilisateur(f)) {
-                            Dialog.show("Success", "Connection accepted", "OK", null);
-                            if (f.getGrade().equals("Client")) {
-                                showMainUI(); //showMainAdmin
-                            } else if (f.getGrade().equals("Administrateur")) {
-                                showMainAdmin();
-                            }
-
+                        if (tfNom.getText().length() == 0 || tfPrenom.getText().length() == 0 || tfAdresse.getText().length() == 0 || tfTelephone.getText().length() < 8 || tfEmail.getText().length() == 0 || tfUsername.getText().length() == 0 || tfPassword.getText().length() == 0 || tfPasswordVerif.getText().length() == 0) {
+                            Dialog.show("Erreur", "Veuillez remplir tous les champs", "OK", null);
                         } else {
-                            Dialog.show("ERROR", "Server error", "OK", null);
+                            System.out.println("champs remplis");
+                            if (tfPasswordVerif.getText().equals(tfPassword.getText())) {
+                                ToastBar.showMessage("Création du compte en cours...", FontImage.MATERIAL_INFO);
+                                fos_user f = new fos_user(tfNom.getText(), tfPrenom.getText(), tfAdresse.getText(), Integer.parseInt(tfTelephone.getText()), tfEmail.getText(), role, tfUsername.getText(), tfPassword.getText());
+                                if (ServiceUtilisateur.getInstance().addUtilisateur(f)) {
+                                    Dialog.show("Success", "Connection accepted", "OK", null);
+                                    if (f.getGrade().equals("Client")) {
+                                        showMainUI(); //showMainAdmin
+                                    } else if (f.getGrade().equals("Administrateur")) {
+                                        showMainAdmin();
+                                    }
+                                } else {
+                                    Dialog.show("ERROR", "Server error", "OK", null);
+                                }
+                            } else {
+                                Dialog.show("Erreur", "Le mot de passe saisi ne correspond pas à sa vérification", "OK", null);
+                            }
                         }
-
                     }
+                }
+                );
 
-                });
-
-                hi1.addAll(tfNom, tfPrenom, tfAdresse, tfTelephone, tfEmail, tfUsername, tfPassword, btnValider); //, rolesList
+                hi1.addAll(tfNom, tfPrenom, tfAdresse, tfTelephone, tfEmail, tfUsername, tfPassword, tfPasswordVerif, btnValider); //, rolesList
                 hi1.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> hi.showBack());
                 hi1.show();
 
             }
-        });
+        }
+        );
 
         hi.show();
 
     }
-
     //menu client
+
     public void showMainUI() {
         final Form f = new Form("Smart Truck", new BorderLayout());
 
@@ -551,15 +572,15 @@ public class MyApplication {
     //menu administrateur
     public void showMainAdmin() {
         final Form f = new Form("Smart Truck", new BorderLayout());
-        
+
         Demo[] demos = new Demo[]{
             new Users(),
-            new Fournisseurs(), new Livreurs(), 
-            new Articles(),new Commandes(),
+            new Fournisseurs(), new Livreurs(),
+            new Articles(), new Commandes(),
             new Allees(), new Emplacements(),
             new ClockDemo(),
-            new Themes(), new Input(),
-            new Video(), new SalesDemo(),};
+            new Themes(), new Video(),
+            new Input(), new SalesDemo(),};
 
         for (Demo d : demos) {
             d.init(res);
