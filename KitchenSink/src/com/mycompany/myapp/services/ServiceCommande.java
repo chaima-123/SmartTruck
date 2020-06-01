@@ -9,10 +9,12 @@ import com.codename1.io.NetworkManager;
 import com.codename1.l10n.DateFormat;
 import com.codename1.l10n.ParseException;
 import com.codename1.l10n.SimpleDateFormat;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.events.ActionListener;
 import com.mycompany.myapp.entities.Commande;
 import com.mycompany.myapp.entities.CommandeE;
 import com.mycompany.myapp.entities.LigneCommande;
+import com.mycompany.myapp.entities.Mail;
 import com.mycompany.myapp.entities.Palette;
 import com.mycompany.myapp.utils.Statics;
 import java.io.IOException;
@@ -190,14 +192,14 @@ public class ServiceCommande {
     public ArrayList<CommandeE> parseCmd(String jsonText) throws ParseException{
         try {
           cmd=new ArrayList<>();
-            System.out.println("llllll"+jsonText);
+           // System.out.println("llllll"+jsonText);
             JSONParser j = new JSONParser();
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
             
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
             System.out.println(list);
             for(Map<String,Object> obj : list){
-                System.out.println("99999999999");
+              //  System.out.println("99999999999");
                 CommandeE e = new CommandeE();
             int id= (int)Float.parseFloat(obj.get("idCommande").toString());
                 e.setId(id);
@@ -207,7 +209,6 @@ public class ServiceCommande {
                 e.setRef((m));
                 int a= (int)Float.parseFloat(obj.get("qte").toString());
                 e.setQte(a);
-//
               e.setEtat((obj.get("etat").toString()));
                 e.setMontant(Float.parseFloat(obj.get("montant").toString()));
                 DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
@@ -215,17 +216,14 @@ public class ServiceCommande {
                    // e.setDateLivraison(simpleDateFormat.parse(obj.get("dateReception").toString()));
 
                 e.setNomSociete((obj.get("nomsociete").toString()));
-                                System.out.println("oooo"+ e);
+                              //  System.out.println("oooo"+ e);
                cmd.add(e);
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());      
         }
-        for (int i=0; i<cmd.size();i++)
-                {
-                    System.out.println(cmd.get(i).getEtat());
-                }
-        System.out.println("jjjjjj"+cmd);
+        
+        //System.out.println("jjjjjj"+cmd);
         return cmd;
     }
     
@@ -240,12 +238,12 @@ public class ServiceCommande {
             public void actionPerformed(NetworkEvent evt) {
                 String res = new String(req.getResponseData());
                 System.out.println("resultats: " + res);
-                System.out.println(res);
+                //System.out.println(res);
                 try {
                     cmd = parseCmd(res);
                 } catch (ParseException ex) {
                 }
-                System.out.println("bbb :" + cmd);
+               // System.out.println("bbb :" + cmd);
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
@@ -254,51 +252,67 @@ public class ServiceCommande {
     
     
     
-      public ArrayList<Commande> parseCmde(String jsonText) throws ParseException{
-        try {
-          Lastcmd=new ArrayList<>();
-            System.out.println("llllll"+jsonText);
-            JSONParser j = new JSONParser();
-            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
-            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.println(list);
-            for(Map<String,Object> obj : list){
-               
-                Commande e = new Commande();
-            
-                String n= obj.get("numCommande").toString();
-               e.setNum_commande((n));
-              
-              e.setEtat((obj.get("etat").toString()));
-                e.setMontant(Float.parseFloat(obj.get("montant").toString()));
-                DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-                e.setDate_commande(simpleDateFormat.parse(obj.get("dateCommande").toString()));
-                e.setDate_livraison(simpleDateFormat.parse(obj.get("dateLivraison").toString()));
-
-                               
-              Lastcmd.add(e);
-            }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());      
-        }
-       
-        return Lastcmd;
-    }
+//      public ArrayList<Commande> parseCmde(String jsonText) throws ParseException{
+//        try {
+//          Lastcmd=new ArrayList<>();
+//            //System.out.println("llllll"+jsonText);
+//            JSONParser j = new JSONParser();
+//            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+//            
+//            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
+//            System.out.println(list);
+//            for(Map<String,Object> obj : list){
+//               
+//                Commande e = new Commande();
+//            
+//                String n= obj.get("numCommande").toString();
+//               e.setNum_commande((n));
+//              
+//              e.setEtat((obj.get("etat").toString()));
+//                e.setMontant(Float.parseFloat(obj.get("montant").toString()));
+//                DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+//                e.setDate_commande(simpleDateFormat.parse(obj.get("dateCommande").toString()));
+//                e.setDate_livraison(simpleDateFormat.parse(obj.get("dateLivraison").toString()));
+//
+//                               
+//              Lastcmd.add(e);
+//            }
+//        } catch (IOException ex) {
+//            System.out.println(ex.getMessage());      
+//        }
+//       
+//        return Lastcmd;
+//    }
        public boolean UpdateCommande(CommandeE t) {
-        String url = Statics.BASE_URL + "/update/"+t.getNumCommande()+"/"+t.getRef()+"/"+t.getId()+"?qte="+ t.getQte()+"&montant="+t.getMontant()+"&datecommande="+t.getDateCommande()+"&etat="+t.getEtat();      
+        String url = Statics.BASE_URL +"/update/"+t.getNumCommande()+"/"+t.getRef()+"/"+t.getId()+"?qte="+ t.getQte()+"&montant="+t.getMontant()+"&dateCommande="+t.getDateCommande()+"&etat="+t.getEtat();      
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
                 resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
                 req.removeResponseListener(this);
+
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
+        //req.pause();
         return resultOK;
     }
     
-    
+    public boolean envoyermail(Mail t) {
+        String url = Statics.BASE_URL +"/mail2/"+t.getFrs()+"/"+t.getMail()+"/"+t.getSujet()+"/"+t.getObjet();      
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        //req.pause();
+        return resultOK;
+    }
     
 }
