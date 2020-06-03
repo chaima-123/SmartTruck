@@ -1,7 +1,4 @@
-
 package com.mycompany.myapp.services;
-
-
 
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
@@ -32,16 +29,15 @@ import java.util.Map;
 public class ServicePalette {
 
     public ArrayList<Palette> palettes;
-        public ArrayList<Article> articles;
-            public ArrayList<Emplacement> emps;
+    public ArrayList<Article> articles;
+    public ArrayList<Emplacement> emps;
 
-    
-    public static ServicePalette instance=null;
+    public static ServicePalette instance = null;
     public boolean resultOK;
     private ConnectionRequest req;
 
     private ServicePalette() {
-         req = new ConnectionRequest();
+        req = new ConnectionRequest();
     }
 
     public static ServicePalette getInstance() {
@@ -52,10 +48,8 @@ public class ServicePalette {
     }
 
     public boolean addPalette(Palette t) {
-        String url = Statics.BASE_URL + "/palette/palette/new/"+t.getRef()+"/"+t.getCodeEmp()+"?qte=" + t.getQte()+"&dateExpiration="+t.getDate_expiration() ;
-        
-        
-        
+        String url = Statics.BASE_URL + "/palette/palette/new/" + t.getRef() + "/" + t.getCodeEmp() + "?qte=" + t.getQte() + "&dateExpiration=" + t.getDate_expiration();
+
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -70,44 +64,39 @@ public class ServicePalette {
 
     public ArrayList<Palette> parsePalette(String jsonText) {
         try {
-            palettes=new ArrayList<>();
+            palettes = new ArrayList<>();
             JSONParser j = new JSONParser();
-            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
-            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            for(Map<String,Object> obj : list){
+            Map<String, Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+
+            List<Map<String, Object>> list = (List<Map<String, Object>>) tasksListJson.get("root");
+            for (Map<String, Object> obj : list) {
                 Palette t = new Palette();
-              
-              
 
                 try {
-                    t.setNum_lot(((int)Float.parseFloat(obj.get("numLot").toString())));
+                    t.setNum_lot(((int) Float.parseFloat(obj.get("numLot").toString())));
 
-                t.setQte(((int)Float.parseFloat(obj.get("qte").toString())));
-                t.setRef(obj.get("1").toString());
-                t.setCodeEmp(obj.get("2").toString());
-                
-                DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-                    t.setDate_expiration( simpleDateFormat.parse(obj.get("dateExpiration").toString()));
-                     palettes.add(t);
+                    t.setQte(((int) Float.parseFloat(obj.get("qte").toString())));
+                    t.setRef(obj.get("1").toString());
+                    t.setCodeEmp(obj.get("2").toString());
+
+                    DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    t.setDate_expiration(simpleDateFormat.parse(obj.get("dateExpiration").toString()));
+                    palettes.add(t);
                 } catch (ParseException ex) {
                 }
 
-              
-                             //  System.out.println(obj.get("codeemp").toString());
-
+                //  System.out.println(obj.get("codeemp").toString());
             }
-            
-            
+
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-            
+
         }
         return palettes;
     }
-    
-    public ArrayList<Palette> getAllPAlette(){
-        String url = Statics.BASE_URL+"/palette/palette/all";
+
+    public ArrayList<Palette> getAllPAlette() {
+        String url = Statics.BASE_URL + "/palette/palette/all";
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -121,79 +110,91 @@ public class ServicePalette {
         return palettes;
     }
     
-    public ArrayList<Article> parseArticle(String jsonText){
-
-        try {
-            articles=new ArrayList<>();
-            JSONParser j = new JSONParser();
-            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
-            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            for(Map<String,Object> obj : list){
-                Article a = new Article();
-              
-                a.setRefArticle((obj.get("refArticle")).toString());
-                a.setDesignation((obj.get("designation")).toString());
-                a.setCode(((obj.get("codeBarres")).toString()));
-                a.setPrix(Float.parseFloat((obj.get("prixVente")).toString()));
-
-              articles.add(a);
-                             //  System.out.println(obj.get("codeemp").toString());
-
-            }
-            
-            
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            
-        }
-        return articles;
-    }
-    public ArrayList<Article> getAllArticle(){
-        String url = Statics.BASE_URL+"/palette/palette/article";
+    public ArrayList<Palette> findPalette(int num) {
+        String url = Statics.BASE_URL + "/palette/palette/find/"+num;
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-            articles = parseArticle(new String(req.getResponseData()));
+                palettes = parsePalette(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return palettes;
+    }
+
+    public ArrayList<Article> parseArticle(String jsonText) {
+
+        try {
+            articles = new ArrayList<>();
+            JSONParser j = new JSONParser();
+            Map<String, Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+
+            List<Map<String, Object>> list = (List<Map<String, Object>>) tasksListJson.get("root");
+            for (Map<String, Object> obj : list) {
+                Article a = new Article();
+
+                a.setRefArticle((obj.get("refArticle")).toString());
+                a.setDesignation((obj.get("designation")).toString());
+                a.setCode(((obj.get("codeBarres")).toString()));
+                a.setPrix(Float.parseFloat((obj.get("prixVente")).toString()));
+
+                articles.add(a);
+                //  System.out.println(obj.get("codeemp").toString());
+
+            }
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+
+        }
+        return articles;
+    }
+
+    public ArrayList<Article> getAllArticle() {
+        String url = Statics.BASE_URL + "/palette/palette/article";
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                articles = parseArticle(new String(req.getResponseData()));
                 req.removeResponseListener(this);
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return articles;
     }
-    
-    
-    public ArrayList<Emplacement> parseEmp(String jsonText){
+
+    public ArrayList<Emplacement> parseEmp(String jsonText) {
         try {
-           emps=new ArrayList<>();
+            emps = new ArrayList<>();
             JSONParser j = new JSONParser();
-            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
-            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            for(Map<String,Object> obj : list){
+            Map<String, Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+
+            List<Map<String, Object>> list = (List<Map<String, Object>>) tasksListJson.get("root");
+            for (Map<String, Object> obj : list) {
                 Emplacement t = new Emplacement();
-              
+
                 t.setCodeEmp(obj.get("codeemp").toString());
                 //t.setCodeEmp(obj.get("codeemp").toString());
-               
 
-               emps.add(t);
-                             //  System.out.println(obj.get("codeemp").toString());
+                emps.add(t);
+                //  System.out.println(obj.get("codeemp").toString());
 
             }
-            
-            
+
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-            
+
         }
         return emps;
     }
-    
-    public ArrayList<Emplacement> getAllEmp(){
-        String url = Statics.BASE_URL+"/palette/palette/emp";
+
+    public ArrayList<Emplacement> getAllEmp() {
+        String url = Statics.BASE_URL + "/palette/palette/emp";
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -206,24 +207,9 @@ public class ServicePalette {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return emps;
     }
-    
+
     public boolean UpdatePalette(Palette t) {
-        String url = Statics.BASE_URL + "/palette/palette/update/" +t.getNum_lot()+"/"+ t.getRef()+"/"+t.getCodeEmp()+"?dateExpiration="+t.getDate_expiration()+"&qte="+t.getQte();      
-        req.setUrl(url);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                String str = new String(req.getResponseData());
-            System.out.println(str);
-                System.out.println(t);
-            Dialog.show("Succés", "Palette modifiée", "ok", null);
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        return resultOK;
-    }
-    public boolean DeletePalette(Palette t) {
-        String url = Statics.BASE_URL + "/palette/palette/delete/" +t.getNum_lot();      
+        String url = Statics.BASE_URL + "/palette/palette/update/" + t.getNum_lot() + "/" + t.getRef() + "/" + t.getCodeEmp() + "?qte=" + t.getQte()+ "&dateexpiration=" + t.getDate_expiration();
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -235,7 +221,19 @@ public class ServicePalette {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }
-    
-   
-}
 
+    public boolean DeletePalette(Palette t) {
+        String url = Statics.BASE_URL + "/palette/palette/delete/" + t.getNum_lot();
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+
+}
