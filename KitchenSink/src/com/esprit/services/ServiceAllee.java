@@ -25,6 +25,8 @@ import java.util.Map;
 public class ServiceAllee {
 
     public ArrayList<Allee> tasks;
+   public    Allee aa = new Allee();
+
 
     public static ServiceAllee instance = null;
     public boolean resultOK;
@@ -88,6 +90,39 @@ public class ServiceAllee {
        
         return tasks;
     }
+    
+    public Allee parseAllee(String jsonText) {
+
+        try {
+            tasks = new ArrayList<>();
+
+            JSONParser j = new JSONParser();// Instanciation d'un objet JSONParser permettant le parsing du résultat json
+
+            Map<String, Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+            
+            List<Map<String, Object>> list = (List<Map<String, Object>>) tasksListJson.get("root");
+
+            //Parcourir la liste des tâches Json
+            for (Map<String, Object> obj : list) {
+                //Création des tâches et récupération de leurs données
+                float id = Float.parseFloat(obj.get("id").toString());
+                float niv = Float.parseFloat(obj.get("niv").toString());
+                float nbTrav = Float.parseFloat(obj.get("nbTrav").toString());
+
+                aa.setId((int) id);
+                aa.setNiveau((int) niv);
+                aa.setNbTrav((int) nbTrav);
+
+                aa.setLigne(((obj.get("ligne").toString())));
+                //Ajouter la tâche extraite de la réponse Json à la liste
+          }
+
+        } catch (IOException ex) {
+
+        }
+       
+        return aa;
+    }
 
     public ArrayList<Allee> getAllAllee() {
         String url = Statics.BASE_URL + "/all";
@@ -135,5 +170,21 @@ public class ServiceAllee {
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
+    }
+      
+      
+       public Allee getAllee(String t) {
+        String url = Statics.BASE_URL + "/getAllee/"+t;
+        //création de l'URL
+        req.setUrl(url);// Insertion de l'URL de notre demande de connexion
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                aa = parseAllee(new String(req.getResponseData()));
+                req.removeResponseListener(this);                          
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return aa;
     }
 }
