@@ -5,28 +5,14 @@
  */
 package com.mycompany.myapp.services;
 
-import com.codename1.components.ImageViewer;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
-import com.codename1.ui.Button;
-import com.codename1.ui.Command;
-import com.codename1.ui.Container;
-import com.codename1.ui.Dialog;
-import com.codename1.ui.EncodedImage;
-import com.codename1.ui.Image;
-import com.codename1.ui.Label;
-import com.codename1.ui.TextField;
-import com.codename1.ui.URLImage;
-import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
-import com.codename1.ui.layouts.BoxLayout;
 import com.mycompany.myapp.entities.Article;
-import com.mycompany.myapp.entities.CommandeE;
 import com.mycompany.myapp.entities.Famille;
-import com.mycompany.myapp.entities.LigneCommande;
 import com.mycompany.myapp.utils.Statics;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,7 +70,7 @@ public class ServiceArticle {
             
             for(Map<String,Object> obj : list){
                 Article a = new Article();
-              //  System.out.println("tgoooooooooooooooooooooooooooooooooooooooooo"+obj.get("refArticle"));
+              
          /*       float SM = Float.parseFloat(obj.get("seuilMin").toString());
                 float SMX = Float.parseFloat(obj.get("seuilMax").toString());*/
                 a.setRef_article(obj.get("refArticle").toString());
@@ -95,16 +81,15 @@ public class ServiceArticle {
                
                         famille = (LinkedHashMap) obj.get("Famille");
                Famille fml = new Famille();
-               
-//                for (Map.Entry <String, Object> entry : famille.entrySet()) {
-//                    
-//                    if (entry.getKey().contains("nomFamille")) {
-//                   
-//           
-//            
-//                        fml.setNomFamille(entry.getValue().toString());
-//                    }
-//                }
+                for (Map.Entry<String, Object> entry : famille.entrySet()) {
+                    
+                    if (entry.getKey().contains("nomFamille")) {
+                   
+           
+            
+                        fml.setNomFamille(entry.getValue().toString());
+                    }
+                }
              /*   a.setSeuil_min((int)SM);
                 a.setSeuil_max((int)SMX);
                 a.setUnité(obj.get("unite").toString());
@@ -218,42 +203,22 @@ public class ServiceArticle {
     
     
     
-     public boolean addcommande(LigneCommande t) {
+     public boolean addcommande(String ref , String quantite) {
          
-       
-  
-         System.out.println((t.getQte()));
+        String url = Statics.BASE_URL + "/mobile/ajoutcommandeclient?refArticle="
+                + ref + "&qte=" + quantite+"&id="+Statics.user.getId()  ;
         
-        String url = Statics.BASE_URL + "/mobile/ajoutcommandeclient/"
-                + t.getRef_article()+"/"+ t.getQte() ;  
-        
-        req.setUrl(url);
+        //création de l'URL
+        req.setUrl(url);// Insertion de l'URL de notre demande de connexion
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-                req.removeResponseListener(this);
+                resultOK = req.getResponseCode() == 200;
+                  req.removeResponseListener(this);
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
-    }
-
-    
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     }
      
      
@@ -275,7 +240,7 @@ public class ServiceArticle {
         });
     }
      */
-
+}
    
         
 //        req.setUrl(url);
@@ -294,3 +259,4 @@ public class ServiceArticle {
 //        return articles;
     
     
+

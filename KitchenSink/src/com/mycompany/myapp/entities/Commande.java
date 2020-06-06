@@ -12,17 +12,52 @@ import java.util.Date;
  * @author Asus
  */
 public class Commande {
-    private int id_commande, user, num_commande, montant;
+    private int id_commande, user, num_commande1, montant1;
     private Date date_commande, date_livraison;
     private String type, etat;
+    
+    private String num_commande;
+     private float montant;
 
     public Commande() {
     }
+public String getNum_commande() {
+        return num_commande;
+    }
 
+    public void setNum_commande(String num_commande) {
+        this.num_commande = num_commande;
+    }
+
+    public float getMontant() {
+        return montant;
+    }
+
+    public void setMontant(float montant) {
+        this.montant = montant;
+    }
+
+
+    public Commande(int id_commande ,String num_commande, float montant, Date date_livraison, Date date_commande) {
+        this.num_commande = num_commande;
+        this.montant = montant;
+        this.date_livraison = date_livraison;
+        this.date_commande = date_commande;
+        this.id_commande= id_commande;
+    }
+    public Commande(int id_commande ,String num_commande, float montant, Date date_livraison, Date date_commande,String etat) {
+        this.num_commande = num_commande;
+        this.montant = montant;
+        this.date_livraison = date_livraison;
+        this.date_commande = date_commande;
+        this.id_commande= id_commande;
+        this.etat= etat;
+    }
+    
     public Commande(int id_commande, int user, int num_commande, int montant, Date date_commande, Date date_livraison, String type, String etat) {
         this.id_commande = id_commande;
         this.user = user;
-        this.num_commande = num_commande;
+        this.num_commande1 = num_commande;
         this.montant = montant;
         this.date_commande = date_commande;
         this.date_livraison = date_livraison;
@@ -32,7 +67,7 @@ public class Commande {
     
     public Commande(int user, int num_commande, int montant, Date date_commande, Date date_livraison, String type, String etat) {
         this.user = user;
-        this.num_commande = num_commande;
+        this.num_commande1 = num_commande;
         this.montant = montant;
         this.date_commande = date_commande;
         this.date_livraison = date_livraison;
@@ -56,21 +91,9 @@ public class Commande {
         this.user = user;
     }
 
-    public int getNum_commande() {
-        return num_commande;
-    }
+   
 
-    public void setNum_commande(int num_commande) {
-        this.num_commande = num_commande;
-    }
-
-    public int getMontant() {
-        return montant;
-    }
-
-    public void setMontant(int montant) {
-        this.montant = montant;
-    }
+   
 
     public Date getDate_commande() {
         return date_commande;

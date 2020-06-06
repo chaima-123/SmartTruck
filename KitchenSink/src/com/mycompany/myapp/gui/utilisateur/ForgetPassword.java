@@ -9,6 +9,7 @@ import com.codename1.components.ToastBar;
 import com.codename1.ui.Button;
 import com.codename1.ui.ComboBox;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Display;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
@@ -19,8 +20,10 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
+import com.mycompany.myapp.MyApplication;
 import com.mycompany.myapp.entities.fos_user;
 import com.mycompany.myapp.services.ServiceUtilisateur;
+import com.mycompany.myapp.services.TwilioSMS;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +39,7 @@ public class ForgetPassword extends Form {
         TextField tfUsername = new TextField("", "Username", 20, TextField.ANY);
         FontImage.setMaterialIcon(tfUsername.getHintLabel(), FontImage.MATERIAL_PERSON);
 
-        TextField tfEmail = new TextField("", "Email", 20, TextField.EMAILADDR);
+        TextField tfEmail = new TextField("", "Email", 20, TextField.ANY);
         FontImage.setMaterialIcon(tfUsername.getHintLabel(), FontImage.MATERIAL_MAIL);
 
         Validator val = new Validator();
@@ -56,8 +59,19 @@ public class ForgetPassword extends Form {
                         Label nom = new Label("Cher utilisateur Mr/Mme " + fer.getNom() + " " + fer.getPrenom());
                         Label pwd = new Label("Votre mot de passe est: " + fer.getPassword());
 
-                        add(nom);
-                        add(pwd);
+//                        TwilioSMS s = new TwilioSMS("AC144a9fe7a1f7ae1f571704be8742a80c", "2cffde90d972a3b28ecf61d6bfc972ce", "+21624389705");
+//                        s.sendSmsAsync("+21624389705", "Confirmation");
+//                        System.out.println("done");
+                        String Text = ("Cher utilisateur Mr/Mme " + fer.getNom() + " " + fer.getPrenom() + "Votre mot de passe est: " + fer.getPassword());
+
+                        if (Dialog.show("Confirmation", "Voulez-vous envoyer le mot de passe sur mail? ", "OK", "ANNULER")) {
+                            ServiceUtilisateur.getInstance().envoyerMail(5);
+                            //ServiceUtilisateur.getInstance().sendMail(Text);
+                            Dialog.show("Succes", "Mail envoyé ", "OK", null);
+                        } else {
+                            add(nom);
+                            add(pwd);
+                        }
                     } else {
                         Dialog.show("Erreur", "Verifier votre email", "OK", null);
                     }
@@ -71,4 +85,5 @@ public class ForgetPassword extends Form {
         add(btnValider);
 
     }
+
 }
