@@ -1,4 +1,4 @@
-﻿/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -10,6 +10,7 @@ import com.codename1.components.ToastBar;
 import com.codename1.ui.Button;
 import com.codename1.ui.ComboBox;
 import com.codename1.ui.Command;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
@@ -17,6 +18,7 @@ import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.plaf.Border;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
@@ -43,7 +45,7 @@ public class AddUserForm extends Form {
         FontImage.setMaterialIcon(tfTelephone.getHintLabel(), FontImage.MATERIAL_LIBRARY_BOOKS);
         TextField tfEmail = new TextField("", "E-mail", 20, TextField.EMAILADDR);
         FontImage.setMaterialIcon(tfEmail.getHintLabel(), FontImage.MATERIAL_EMAIL);
-        ComboBox rolesList = new ComboBox("Client", "Administrateur");
+        ComboBox rolesList = new ComboBox("Client", "Manager", "Administrateur");
         String role = rolesList.getSelectedItem().toString();
         TextField tfUsername = new TextField("", "Identifiant", 20, TextField.ANY);
         FontImage.setMaterialIcon(tfUsername.getHintLabel(), FontImage.MATERIAL_PERSON);
@@ -61,9 +63,16 @@ public class AddUserForm extends Form {
                 addConstraint(tfPassword, new LengthConstraint(2, "Password must have at least 6 characters"));
 
         Button btnValider = new Button("Créer un nouveau compte");
+        
+        btnValider.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+        btnValider.getAllStyles().setFgColor(0x189fA5);
+        
         btnValider.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
+                if ((tfNom.getText().length() == 0) || (tfPrenom.getText().length() == 0) || (tfAdresse.getText().length() == 0) || (tfEmail.getText().length() == 0)  || (tfTelephone.getText().length()<7) || (tfUsername.getText().length() == 0)|| (tfPassword.getText().length() == 0)) {
+                        Dialog.show("Alert", "Veuillez remplir tous les champs","OK", null);
+                    } else {
                 ToastBar.showMessage("Ajout en cours...", FontImage.MATERIAL_INFO);
                 fos_user f = new fos_user(tfNom.getText(), tfPrenom.getText(), tfAdresse.getText(), Integer.parseInt(tfTelephone.getText()), tfEmail.getText(), role, tfUsername.getText(), tfPassword.getText());
                 if (ServiceUtilisateur.getInstance().addUtilisateurAdmin(f)) {
@@ -73,7 +82,7 @@ public class AddUserForm extends Form {
                         Dialog.show("ERREUR", "Echec à l'ajout", "OK", null);
                     }
             }
-
+            }
         });
 
         addAll(tfNom, tfPrenom, tfAdresse, tfTelephone, tfEmail, rolesList, tfUsername, tfPassword, btnValider);

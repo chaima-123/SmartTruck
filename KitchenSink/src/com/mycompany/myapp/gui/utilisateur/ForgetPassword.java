@@ -1,4 +1,4 @@
-﻿/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,6 +8,8 @@ package com.mycompany.myapp.gui.utilisateur;
 import com.codename1.components.ToastBar;
 import com.codename1.ui.Button;
 import com.codename1.ui.ComboBox;
+import static com.codename1.ui.Component.CENTER;
+import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
 import com.codename1.ui.FontImage;
@@ -17,10 +19,12 @@ import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.plaf.Border;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
 import com.mycompany.myapp.MyApplication;
+import com.mycompany.myapp.entities.Mail;
 import com.mycompany.myapp.entities.fos_user;
 import com.mycompany.myapp.services.ServiceUtilisateur;
 import com.mycompany.myapp.services.TwilioSMS;
@@ -47,6 +51,10 @@ public class ForgetPassword extends Form {
         val.addConstraint(tfUsername, new LengthConstraint(2, "Username doit avoir au minimum 2 lettres"));
 
         Button btnValider = new Button("Récupérer mot de passe");
+        
+        btnValider.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+        btnValider.getAllStyles().setFgColor(0x189fA5);
+        
         btnValider.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -59,16 +67,29 @@ public class ForgetPassword extends Form {
                         Label nom = new Label("Cher utilisateur Mr/Mme " + fer.getNom() + " " + fer.getPrenom());
                         Label pwd = new Label("Votre mot de passe est: " + fer.getPassword());
 
-//                        TwilioSMS s = new TwilioSMS("AC144a9fe7a1f7ae1f571704be8742a80c", "2cffde90d972a3b28ecf61d6bfc972ce", "+21624389705");
-//                        s.sendSmsAsync("+21624389705", "Confirmation");
-//                        System.out.println("done");
                         String Text = ("Cher utilisateur Mr/Mme " + fer.getNom() + " " + fer.getPrenom() + "Votre mot de passe est: " + fer.getPassword());
-
                         if (Dialog.show("Confirmation", "Voulez-vous envoyer le mot de passe sur mail? ", "OK", "ANNULER")) {
+//                            Form hi = new Form ("Envoyer un mail");
+//                            Container cMail = new Container(BoxLayout.y());
+//                            TextField to = new TextField("", "Envoyer à");
+//                            TextField objet = new TextField("", "Objet");
+//                            TextField msg = new TextField("", "Message");
+//                            
+//                            Mail m = new Mail (to.getText(),objet.getText(),msg.getText());
+//                            
+//                            cMail.add(to);
+//                            cMail.add(objet);
+//                            cMail.add(msg);
+//                            
+//                            ServiceUtilisateur.getInstance().sendMail(m);
+//                            
+//                            hi.add(cMail);
+//                            hi.show();
                             ServiceUtilisateur.getInstance().envoyerMail(5);
-                            //ServiceUtilisateur.getInstance().sendMail(Text);
                             Dialog.show("Succes", "Mail envoyé ", "OK", null);
                         } else {
+                            System.out.println(nom);
+                            System.out.println(pwd);
                             add(nom);
                             add(pwd);
                         }
