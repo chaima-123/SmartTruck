@@ -184,7 +184,7 @@ public class ListeArticle extends Form {
         );
     }
 
-}
+}//Integer.parseInt(tq.getText)*cm.getPrix()
 
 //  public ListeArticle(Form previous) {
 // ServiceArticle sa = new ServiceArticle
