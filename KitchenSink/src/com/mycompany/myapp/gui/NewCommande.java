@@ -45,16 +45,18 @@ public class NewCommande extends Form {
     public NewCommande(Form f) {
         this.setLayout(BoxLayout.y());
         this.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> new ListeArticle(f).show());
-        setTitle("Voici  votre commande ");
 
         ArrayList<CommandeE> cmd = ServiceCommandeClient.getInstance().getAllCommandes();
 
         //SpanLabel s= new SpanLabel(cmd);
         //add(s);
         Form hi = new Form(BoxLayout.y());
+Float montant= 0f;
+Float total= 0f;
 
         for (CommandeE cm : cmd) {
             Container c = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+            setTitle("Voici  votre Panier:  Nejib");
 
 //
             Label L1 = new Label("Article: " + cm.getRef());
@@ -64,7 +66,9 @@ public class NewCommande extends Form {
 //Label L = new Label("quantité à modifier ");
             Label L3 = new Label("Désignation:" + cm.getDesignation());
             Label L4 = new Label("Etat:" + cm.getEtat());
-            Label L5= new Label("Montant");
+            montant=Integer.parseInt(tq.getText())*cm.getPrix_vente();
+            total+=montant;
+            Label L5= new Label("Montant        "+montant);
             Button btn = new Button("Supprimer");
             Button btn1 = new Button("modifier");
             Label s= new Label ("=====================================");
@@ -120,6 +124,8 @@ public class NewCommande extends Form {
             btn1.getAllStyles().setFgColor(0x189fA5);
 
         }
+       Label m = new Label("Total= "+Float.toString(total)+" DT");
+        add(m);
 
     }
 
