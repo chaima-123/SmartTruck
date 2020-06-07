@@ -1,4 +1,4 @@
-﻿/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,6 +8,7 @@ package com.mycompany.myapp.gui.livreur;
 import com.codename1.components.ToastBar;
 import com.codename1.ui.Button;
 import com.codename1.ui.Command;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
@@ -15,6 +16,7 @@ import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.plaf.Border;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.Validator;
 import com.mycompany.myapp.entities.Livreur;
@@ -50,10 +52,12 @@ public class AddLivreurForm extends Form {
                 .addConstraint(tfTelephone, new LengthConstraint(2, "Prenom doit avoir exactement 8 chiffres "));
 
         Button btnValider = new Button("Ajouter livreur");
+        btnValider.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+        btnValider.getAllStyles().setFgColor(0x189fA5);
         btnValider.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if ((tfNom.getText().length() == 0) || (tfPrenom.getText().length() == 0) || (tfVille.getText().length() == 0) || (tfTelephone.getText().length() == 0)) {
+                if ((tfNom.getText().length() == 0) || (tfPrenom.getText().length() == 0) || (tfVille.getText().length() == 0) || (tfTelephone.getText().length()<7)) {
                     Dialog.show("Alert", "Veuillez remplir tous les champs", "OK", null);
                 } else {
                     ToastBar.showMessage("Ajout en cours...", FontImage.MATERIAL_INFO);
