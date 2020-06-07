@@ -7,12 +7,24 @@ package com.mycompany.myapp.gui.utilisateur;
 
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.Button;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.List;
+import com.codename1.ui.TextField;
+import com.codename1.ui.Toolbar;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.list.DefaultListModel;
+import com.codename1.ui.plaf.Border;
+import com.mycompany.myapp.entities.Fournisseur;
 import com.mycompany.myapp.entities.fos_user;
+import com.mycompany.myapp.services.ServiceFournisseur;
 import com.mycompany.myapp.services.ServiceUtilisateur;
 import java.util.ArrayList;
 
@@ -32,12 +44,14 @@ public class ListUsersForm extends Form {
         SpanLabel sp = new SpanLabel();
         ArrayList<fos_user> utilisateurs;
         utilisateurs = ServiceUtilisateur.getInstance().getAllUtilisateurs();
-	TextField rech = new TextField("", "Rechercher un utilisateur");
+
+        TextField rech = new TextField("", "Rechercher un utilisateur");
         Container cn = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         Container cnToll = new Container(new BorderLayout());
         TextField zoneRecherche = new TextField();
         zoneRecherche.setHint("Rechercher par Username");
         Button boutonRecherche = new Button("ok");
+
         cnToll.addComponent(BorderLayout.CENTER, zoneRecherche);
         cnToll.addComponent(BorderLayout.EAST, boutonRecherche);
         Toolbar toolbar = new Toolbar();
@@ -53,12 +67,19 @@ public class ListUsersForm extends Form {
                 ArrayList<fos_user> l0 = ServiceUtilisateur.getInstance().SearchByUsername(zoneRecherche.getText());
                 for (int i = 0; i < l0.size(); i++) {
                     DefaultListModel model2 = new DefaultListModel();
-                    model2.addItem(l0.get(i).getUsername());
-
+                    model2.addItem("Username: "+l0.get(i).getUsername());
+                    model2.addItem("Nom de l'utilisateur: "+l0.get(i).getNom());
+                    model2.addItem("Prenom de l'utilisateur: "+l0.get(i).getPrenom());                    
+                    model2.addItem("Adresse de l'utilisateur: "+l0.get(i).getAdresse());
+                    model2.addItem("E-mail de l'utilisateur: "+l0.get(i).getEmail());
+                    model2.addItem("Telephone de l'utilisateur: "+l0.get(i).getTelephone());
+                    model2.addItem("Grade de l'utilisateur: "+l0.get(i).getGrade());
+                    model2.addItem("Mot de passe de l'utilisateur: "+l0.get(i).getPassword());
+                    
                     List liste = new List(model2);
                     getStyle().setBgColor(0xffffff);
                     f.addComponent(liste);
-                    f.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
+                    f.getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.show());
                     f.getToolbar().setTitle(("Resultats de la recherche"));
                     f.show();
 
@@ -66,7 +87,6 @@ public class ListUsersForm extends Form {
 
             }
         });
-
 
         for (fos_user fer : utilisateurs) {
             Container c1 = new Container(new BoxLayout(BoxLayout.Y_AXIS));
@@ -136,7 +156,15 @@ public class ListUsersForm extends Form {
             cPassword.add(password);
             c1.add(cPassword);
             Button modifbtn = new Button("Modifier cet utilisateur");
+
+            modifbtn.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+            modifbtn.getAllStyles().setFgColor(0x189fA5);
+
             Button btnDeleteUser = new Button("Supprimer cet utilisateur");
+
+            btnDeleteUser.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+            btnDeleteUser.getAllStyles().setFgColor(0x189fA5);
+
             btnDeleteUser.addActionListener((eeee) -> {
 
                 if (Dialog.show("Confirmation", "Voulez-vous vraiment supprimer cet utilisateur ? ", "OK", "ANNULER")) {
@@ -160,7 +188,6 @@ public class ListUsersForm extends Form {
             c1.add(espace);
             add(c1);
 
-            username.addPointerPressedListener(e -> new UpdateUserForm(current, Integer.parseInt(id.getText()), nom.getText(), prenom.getText(), adresse.getText(), Integer.parseInt(telephone.getText()), email.getText(), grade.getText(), username.getText(), password.getText()).show());
         }
         getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
 
