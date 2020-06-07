@@ -17,12 +17,14 @@ import com.mycompany.myapp.entities.Commande;
 import com.mycompany.myapp.entities.CommandeE;
 import com.mycompany.myapp.entities.Famille;
 import com.mycompany.myapp.entities.LigneCommande;
+import com.mycompany.myapp.entities.Mail;
 import com.mycompany.myapp.entities.fos_user;
 import com.mycompany.myapp.utils.Statics;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -194,7 +196,10 @@ public class ServiceCommandeClient {
                 int a = (int) Float.parseFloat(obj.get("qte").toString());
                 e.setQte(a);
                 e.setEtat((obj.get("etat").toString()));
+                
+              e.setPrix_vente(Float.parseFloat(obj.get("prixVente").toString()));
 
+                
                 cmd.add(e);
             }
         } catch (IOException ex) {
@@ -204,7 +209,7 @@ public class ServiceCommandeClient {
         return cmd;
     }
 
-     public ArrayList<CommandeE> parseCommandes(String jsonText) {
+    public ArrayList<CommandeE> parseCommandes(String jsonText) {
         try {
             cmd = new ArrayList<>();
             JSONParser j = new JSONParser();
@@ -213,19 +218,23 @@ public class ServiceCommandeClient {
             List<Map<String, Object>> list = (List<Map<String, Object>>) commandesListJson.get("root");
             for (Map<String, Object> obj : list) {
                 CommandeE t = new CommandeE();
-                
+                t.setId(((int) Float.parseFloat(obj.get("id_commande").toString())));
                 t.setRef((obj.get("refArticle").toString()));
                 t.setNom(obj.get("nom").toString());
                 t.setQte(((int) Float.parseFloat(obj.get("qte").toString())));
-                
+                t.setSeuilmin(((int) Float.parseFloat(obj.get("seuilMin").toString())));
+
+                t.setSeuilmax(((int) Float.parseFloat(obj.get("seuilMax").toString())));
+
+                t.setEtat((obj.get("etat").toString()));
+
                 cmd.add(t);
             }
         } catch (IOException ex) {
         }
         return cmd;
     }
-    
-    
+
 //    public ArrayList<CommandeE> parseCommandeclient(String jsonText) {
 //        try {
 //
@@ -272,7 +281,6 @@ public class ServiceCommandeClient {
 //        System.out.println(cmd);
 //        return cmd;
 //    }
-
 //        public ArrayList<CommandeE> getAllcommandes(){
 //        String url = Statics.BASE_URL + "/mobile/listecommandeclient";
 //     
@@ -323,7 +331,7 @@ public class ServiceCommandeClient {
 
                 String ger = new String(req.getResponseData());
                 //cmd = parseCommandeclient(ger);
-                cmd=parseCommandes(ger);
+                cmd = parseCommandes(ger);
                 // System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+ger);
                 //System.out.println("66666666666666666666666666666666666666666666"+cmd);
                 System.out.println(req.getResponseData());
@@ -350,6 +358,79 @@ public class ServiceCommandeClient {
 
     public boolean UpdateLigne(LigneCommande t) {
         String url = Statics.BASE_URL + "/mobile/updatecommandemobile/" + t.getRef_article() + "/" + t.getQte();
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+    
+    
+   
+    
+    public boolean UpdateCommandeclient(CommandeE t) {
+        System.out.println(t);
+        String url = Statics.BASE_URL + "/mobile/updatecommandesclient/" + t.getId()+"/"+t.getDateLivraison()+"/"+t.getEtat()+"/"+t.getNumCommande();
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+   
+    
+    public boolean sendMail (Mail t){
+        String url =Statics.BASE_URL + "/mobile/mailMobile/"+t.getMail()+"/"+t.getSujet()+"/"+t.getObjet();      
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+        
+    }
+    
+    
+    
+    
+    
+    public boolean Deletecommandeclient(int t) {
+        String url = "http://127.0.0.1:8000/mobile/admin_deletecommandeclient/" + t;
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+    
+    
+    
+    
+    
+    
+    
+    public boolean findcommande(String t) {
+        String url = "http://127.0.0.1:8000/mobile/admin_deletecommandeclient/" + t;
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
