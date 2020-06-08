@@ -1,4 +1,4 @@
-﻿/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,6 +8,7 @@ package com.mycompany.myapp.services;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
+import com.codename1.io.MultipartRequest;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.ui.Dialog;
@@ -15,6 +16,7 @@ import com.codename1.ui.events.ActionListener;
 import com.mycompany.myapp.entities.Livreur;
 import com.mycompany.myapp.utils.Statics;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +92,7 @@ public class ServiceLivreur {
                 livreurs = ser.parseLivreurs(new String(con.getResponseData()));
             }
         });
-        NetworkManager.getInstance().addToQueueAndWait(req);
+        NetworkManager.getInstance().addToQueueAndWait(con);
         return livreurs;
     }
 
@@ -100,20 +102,18 @@ public class ServiceLivreur {
                 + "?nom=" + ta.getNom()
                 + "&prenom=" + ta.getPrenom()
                 + "&ville=" + ta.getVille()
-                + "&telephone=" + ta.getTelephone();        
+                + "&telephone=" + ta.getTelephone();
         con.setUrl(Url);
 
         con.addResponseListener((e) -> {
             String str = new String(con.getResponseData());
-            System.out.println(str);
-            Dialog.show("Succés", "Livreur modifié", "ok", null);
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
         return resultOK;
     }
     
     public String DeleteLivreur(Livreur c) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/deleteliv/?id=" + c.getId();
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/deleteliv?id=" + c.getId();
         req.setUrl(url);// Insertion de l'URL de notre demande de connexion
         System.out.println(url);
 
@@ -138,7 +138,7 @@ public class ServiceLivreur {
         return result;
     }
 
-      public ArrayList<Livreur> SearchByNom(String nom) {
+    public ArrayList<Livreur> SearchByNom(String nom) {
         String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/searchlivreur/" + nom;
         req.setUrl(url);
         req.setPost(false);

@@ -12,6 +12,7 @@ import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.messaging.Message;
 import com.codename1.ui.events.ActionListener;
+import com.mycompany.myapp.entities.Mail;
 import com.mycompany.myapp.entities.fos_user;
 import java.io.IOException;
 import java.text.ParseException;
@@ -142,24 +143,30 @@ public class ServiceUtilisateur {
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
-        return utilisateurs;        
+        return utilisateurs;   
     }
 
-    public boolean updateUtilisateur(fos_user lv) {
-        System.out.println("Modifier utilisateur:   " + lv);
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/user/updateUtilisateur?id=" + lv.getId() + "&nom=" + lv.getNom() + "&prenom=" + lv.getPrenom() + "&adresse=" + lv.getAdresse() + "&telephone=" + lv.getTelephone() + "&email=" + lv.getEmail() + "&grade=" + lv.getGrade() + "&username=" + lv.getUsername() + "&password=" + lv.getPassword() + "";
-        req.setUrl(url);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-                req.removeResponseListener(this);
-            }
+    
+    public boolean updateUtilisateur(fos_user ta) {
+        ConnectionRequest con = new ConnectionRequest();
+        String Url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/updateutilisateur/" + ta.getId()
+                + "?nom=" + ta.getNom()
+                + "&prenom=" + ta.getPrenom()
+                + "&adresse=" + ta.getAdresse()
+                + "&telephone=" + ta.getTelephone()
+                + "&email=" + ta.getEmail() 
+                + "&grade=" + ta.getGrade() 
+                + "&username=" + ta.getUsername() 
+                + "&password=" + ta.getPassword() + "";
+        con.setUrl(Url);
+
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
         });
-        NetworkManager.getInstance().addToQueueAndWait(req);
+        NetworkManager.getInstance().addToQueueAndWait(con);
         return resultOK;
-
     }
+    
 
     public String DeleteUtilisateur(fos_user c) {
         String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/deleteuser?id=" + c.getId();
@@ -275,17 +282,20 @@ public class ServiceUtilisateur {
         return resultOK;
         
     }
-    
-    
-//    public void sendMail(String mai) {
-//
-//        Message m = new Message("<html><body>Check out <a href=\"https://www.codenameone.com/\">Codename One</a></body></html>");
-//        m.setMimeType(Message.MIME_HTML);
-//
-//        boolean success = m.sendMessageViaCloudSync(mai, "hanene.ennine@esprit.tn", "Name Of User", "Message Subject",
-//                "Check out Codename One at https://www.codenameone.com/");
-//        System.out.println("success: " + success);
-//    }
 
-    
+    public boolean sendMail (Mail t){
+        String url ="http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/mailMobile/"+t.getMail()+"/"+t.getSujet()+"/"+t.getObjet();      
+        req.setUrl(url);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+        
+    }
 }

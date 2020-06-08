@@ -1,4 +1,4 @@
-﻿/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -44,7 +44,7 @@ public class ServiceFournisseur {
     }
 
     public boolean addFournisseur(Fournisseur l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutfournisseurMob?cin=" + l.getCin() + "&email=" + l.getEmail() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&fax=" + l.getFax() + "&nomSociete=" + l.getNomSociete() + "";
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/ajoutfournisseurMobile?cin=" + l.getCin() + "&email=" + l.getEmail() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&fax=" + l.getFax() + "&nomSociete=" + l.getNomSociete() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -57,31 +57,28 @@ public class ServiceFournisseur {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }
-    
-    
+
     public boolean modifierFournisseur(Fournisseur ta) {
         ConnectionRequest con = new ConnectionRequest();
         String Url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/updatefsr/" + ta.getId()
-                + "?nomSociete=" + ta.getNomSociete()
-                + "&cin=" + ta.getCin()
-                + "&adresse=" + ta.getAdresse()
+                + "?cin=" + ta.getCin()
                 + "&email=" + ta.getEmail()
+                + "&adresse=" + ta.getAdresse()
                 + "&telephone=" + ta.getTelephone()
-                + "&fax=" + ta.getFax();
-        
-        con.setUrl(Url);
+                + "&fax=" + ta.getFax()
+                + "&nomSociete=" + ta.getNomSociete();
 
+        con.setUrl(Url);
         con.addResponseListener((e) -> {
             String str = new String(con.getResponseData());
-            System.out.println(str);
-            Dialog.show("Succés", "Fournisseur modifié", "ok", null);
+            System.out.println("modification= "+str);
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
-    return resultOK;
+        return resultOK;
     }
-    
+
     public String DeleteFournisseur(Fournisseur c) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/deletefsr/?id=" + c.getId();
+        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/deletefsr?id=" + c.getId();
         req.setUrl(url);// Insertion de l'URL de notre demande de connexion
         System.out.println(url);
 
@@ -99,7 +96,6 @@ public class ServiceFournisseur {
                     ex.getMessage();
                 }
                 req.removeResponseListener(this);
-
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
@@ -132,7 +128,7 @@ public class ServiceFournisseur {
 
     public ArrayList<Fournisseur> getAllFournisseurs() {
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseurMob");
+        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/showfournisseurMobile");
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {

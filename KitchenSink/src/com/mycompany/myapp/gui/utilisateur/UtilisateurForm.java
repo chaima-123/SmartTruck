@@ -7,9 +7,11 @@ package com.mycompany.myapp.gui.utilisateur;
 
 import com.mycompany.myapp.gui.livreur.*;
 import com.codename1.ui.Button;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.plaf.Border;
 
 /**
  *
@@ -22,22 +24,28 @@ public class UtilisateurForm extends Form {
     public UtilisateurForm() { //Form previous
 
         current = this;
-        setTitle("Gestion des Utilisateurs");
+        //setTitle("Gestion des Utilisateurs");
         setLayout(BoxLayout.y());
 
         add(new Label("Veuillez choisir une option"));
         Button btnListUsers = new Button("Afficher les Utilisateurs");
         Button btnAddUser = new Button("Ajouter un Utilisateur");
-        // Button btnUpdateLivreur = new Button("Modifier un livreur");
-        Button btnDeleteUser = new Button("Supprimer un Utilisateur");
+
+        Label espace = new Label(" "
+                    + " ");
+        
+        btnListUsers.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+        btnListUsers.getAllStyles().setFgColor(0x189fA5);
+
+        btnAddUser.getAllStyles().setBorder(Border.createGrooveBorder(CENTER, 0x189fA5), focusScrolling);
+        btnAddUser.getAllStyles().setFgColor(0x189fA5);
 
         btnAddUser.addActionListener(e -> new AddUserForm(current).show());
         btnListUsers.addActionListener(e -> new ListUsersForm(current).show());
 
-        add(btnAddUser);
         add(btnListUsers);
-        // add(btnUpdateLivreur);
-        add(btnDeleteUser);
+        add(espace);
+        add(btnAddUser);
 
         //getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
     }
