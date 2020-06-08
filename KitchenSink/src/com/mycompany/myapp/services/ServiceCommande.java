@@ -51,62 +51,8 @@ public class ServiceCommande {
     }
     
     
-    public boolean addArticle(LigneCommande t) {
-        String url = Statics.BASE_URL + "/palette/list/" + t.getRefArticle()+"?qte="+ t.getQte() ;      
-        req.setUrl(url);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-                req.removeResponseListener(this);
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        return resultOK;
-    }
-     public ArrayList<CommandeE> parseCmdEnCours(String jsonText){
-        try {
-           cmd=new ArrayList<>();
-            JSONParser j = new JSONParser();
-            Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
-            List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            for(Map<String,Object> obj : list){
-                CommandeE t = new CommandeE();
-              
-                t.setRef(obj.get("1").toString());
-                 t.setDesignation(obj.get("designation").toString());
-                 t.setCode(obj.get("codeBarres").toString());
-                 t.setQte((int)Float.parseFloat(obj.get("qte").toString()));
-           
-               cmd.add(t);
-                            
-
-            }
-            
-            
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            
-        }
-        return cmd;
-    }
     
-    public ArrayList<CommandeE> getAllCommandeEncours(){
-        String url = Statics.BASE_URL+"/palette/commande";
-        req.setUrl(url);
-        req.setPost(false);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                cmd = parseCmdEnCours(new String(req.getResponseData()));
-                req.removeResponseListener(this);
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        return cmd;
-    }
-    
+     
     
        public ArrayList<Commande> parseLastCmd(String jsonText){
         try {
@@ -146,9 +92,9 @@ public class ServiceCommande {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return Lastcmd;
     }
-    
-    public boolean addCmd(Commande t) {
-        String url = Statics.BASE_URL + "/new/" +t.getId_commande()+"?numCommande="+ t.getNum_commande()+"&montant="+t.getMontant()+"&dateCommande="+t.getDate_commande()+"&dateLivraison="+t.getDate_livraison();      
+    public boolean addArticle(LigneCommande t) {
+        System.out.println(t.getRefArticle());
+        String url = Statics.BASE_URL + "/palette/list/"+t.getRefArticle()+"?qte="+ t.getQte() ;      
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -160,6 +106,7 @@ public class ServiceCommande {
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }
+    
     public boolean UpdateLigne(LigneCommande t) {
         String url = Statics.BASE_URL + "/qte/"+t.getRefArticle()+"?qte="+ t.getQte();      
         req.setUrl(url);
@@ -236,14 +183,15 @@ public class ServiceCommande {
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                String res = new String(req.getResponseData());
-                System.out.println("resultats: " + res);
-                //System.out.println(res);
+               
                 try {
-                    cmd = parseCmd(res);
+                    //System.out.println(res);
+                    
+                    cmd = parseCmd(new String(req.getResponseData()));
+                    
+                    // System.out.println("bbb :" + cmd);
                 } catch (ParseException ex) {
                 }
-               // System.out.println("bbb :" + cmd);
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
@@ -283,36 +231,7 @@ public class ServiceCommande {
 //       
 //        return Lastcmd;
 //    }
-       public boolean UpdateCommande(CommandeE t) {
-        String url = Statics.BASE_URL +"/update/"+t.getNumCommande()+"/"+t.getRef()+"/"+t.getId()+"?qte="+ t.getQte()+"&montant="+t.getMontant()+"&dateCommande="+t.getDateCommande()+"&etat="+t.getEtat();      
-        req.setUrl(url);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-                req.removeResponseListener(this);
-
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        //req.pause();
-        return resultOK;
-    }
-    
-    public boolean envoyermail(Mail t) {
-        String url = Statics.BASE_URL +"/mail2/"+t.getFrs()+"/"+t.getMail()+"/"+t.getSujet()+"/"+t.getObjet();      
-        req.setUrl(url);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
-                req.removeResponseListener(this);
-
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        //req.pause();
-        return resultOK;
-    }
+            
+       
     
 }
