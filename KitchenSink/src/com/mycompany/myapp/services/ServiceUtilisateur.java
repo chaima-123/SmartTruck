@@ -46,7 +46,7 @@ public class ServiceUtilisateur {
     }
     
     public boolean login(fos_user l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/login/"+ l.getUsername() + "/" + l.getPassword()+"";
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/login/"+ l.getUsername() + "/" + l.getPassword()+"";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -61,7 +61,7 @@ public class ServiceUtilisateur {
     }
     
     public boolean forget(fos_user l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/forget/"+ l.getUsername() + "";
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/forget/"+ l.getUsername() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -76,7 +76,7 @@ public class ServiceUtilisateur {
     }
 
     public boolean addUtilisateur(fos_user l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/ajoututilisateur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&email=" + l.getEmail() + "&grade=Client" + "&username=" + l.getUsername() + "&password=" + l.getPassword() + "";
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/ajoututilisateur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&email=" + l.getEmail() + "&grade=Client" + "&username=" + l.getUsername() + "&password=" + l.getPassword() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -91,7 +91,7 @@ public class ServiceUtilisateur {
     }
 
     public boolean addUtilisateurAdmin(fos_user l) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/ajoututilisateur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&email=" + l.getEmail() + "&grade=" + l.getGrade() + "&username=" + l.getUsername() + "&password=" + l.getPassword() + "";
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/ajoututilisateur?nom=" + l.getNom() + "&prenom=" + l.getPrenom() + "&adresse=" + l.getAdresse() + "&telephone=" + l.getTelephone() + "&email=" + l.getEmail() + "&grade=" + l.getGrade() + "&username=" + l.getUsername() + "&password=" + l.getPassword() + "";
         req.setUrl(url);
         System.out.println("url: " + url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -134,7 +134,7 @@ public class ServiceUtilisateur {
 
     public ArrayList<fos_user> getAllUtilisateurs() {
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/showutilisateur");
+        con.setUrl("http://localhost/pidev-1/web/app_dev.php/userMobile/showutilisateur");
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
@@ -149,7 +149,7 @@ public class ServiceUtilisateur {
     
     public boolean updateUtilisateur(fos_user ta) {
         ConnectionRequest con = new ConnectionRequest();
-        String Url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/updateutilisateur/" + ta.getId()
+        String Url = "http://localhost/pidev-1/web/app_dev.php/userMobile/updateuser/" + ta.getId()
                 + "?nom=" + ta.getNom()
                 + "&prenom=" + ta.getPrenom()
                 + "&adresse=" + ta.getAdresse()
@@ -169,7 +169,7 @@ public class ServiceUtilisateur {
     
 
     public String DeleteUtilisateur(fos_user c) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/deleteuser?id=" + c.getId();
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/deleteuser?id=" + c.getId();
         req.setUrl(url);// Insertion de l'URL de notre demande de connexion
         System.out.println(url);
 
@@ -194,7 +194,7 @@ public class ServiceUtilisateur {
     }
 
     public ArrayList<fos_user> SearchByUsername (String username) {
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/userMobile/searchuser/" + username;
+        String url = "http://localhost/pidev-1/web/app_dev.php/userMobile/searchuser/" + username;
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -211,7 +211,7 @@ public class ServiceUtilisateur {
     public fos_user CheckLoginData(String username, String password) {
         ConnectionRequest con = new ConnectionRequest();
 
-        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserpwd/" + username + "/" + password);
+        con.setUrl("http://localhost/pidev-1/web/app_dev.php/userMobile/getuserpwd/" + username + "/" + password);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
@@ -255,7 +255,7 @@ public class ServiceUtilisateur {
 
     public fos_user getUserData(int user_id) {
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/pi1/test1.1/web/app_dev.php/userMobile/getuserid/" + user_id);
+        con.setUrl("http://localhost/pidev-1/web/app_dev.php/userMobile/getuserid/" + user_id);
 
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -269,7 +269,7 @@ public class ServiceUtilisateur {
     }
     
     public boolean envoyerMail (int id){
-        String url = "http://localhost/pi1/test1.1/web/app_dev.php/adminMobile/composemail/"+id ;
+        String url = "http://localhost/pidev-1/web/app_dev.php/adminMobile/composemail/"+id ;
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
